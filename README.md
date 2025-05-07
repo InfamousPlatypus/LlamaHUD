@@ -13,15 +13,22 @@ Minimal UI, fast, light, /commands can run your entire computer. We are starting
 
 # Currently implemented
 GUI
+
 Ollama backend
+
 Basic notifications
 
 # Todo (Ordered as of 5/7/25)
 /json
+
 /LlamaHud
+
 other backends
+
     Watsonx?
+    
     GPT4All
+    
     AnythingLLM
 
 # blocked
