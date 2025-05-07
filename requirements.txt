@@ -1,3 +1,4 @@
 wxPython
 ollama
 plyer
+pyinstaller
