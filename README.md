@@ -4,8 +4,8 @@ LlamaHUD is a minimal LLM frontend that operates under the assumption that there
 
 The GUI is very simple, a chat history, a text box and a submit buttion. This comes from our operating model that has two parts
 
-## Everything can be done with text.
-## Everything can be done in notifications.
+### Everything can be done with text.
+### Everything can be done in notifications.
 
 Sadly we are currently blocked in the second part by the fact that notification programs do not support 
 
