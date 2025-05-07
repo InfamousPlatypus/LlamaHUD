@@ -19,6 +19,8 @@ Ollama backend
 Basic notifications
 
 # Todo (Ordered as of 5/7/25)
+Supress python window
+
 /json
 
 /LlamaHud
