@@ -1,4 +1,9 @@
 wxPython
 ollama
 plyer
-pyinstaller
+openai
+anthropic
+google-generativeai
+ibm-watsonx-ai
+PyPDF2
+windows-toasts

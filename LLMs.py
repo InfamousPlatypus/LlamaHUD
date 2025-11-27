@@ -1,16 +1,17 @@
-import ollama
+try:
+    import ollama
+except ImportError:
+    ollama = None
 import json
-from Notifs import easy_notification
-default_app = ""  # Default application for LLMs
-default_model = ""  # Default model for LLMs
-chat_history = []  # List to store chat history
+
+default_app = ""
+default_model = ""
+chat_history = []
 
 def sendToLLM(prompt):
-    global default_app, default_model, chat_history  # Declare global variables
-
-    # Check if default_app is set
+    global default_app, default_model, chat_history
+    
     if default_app == "":
-        # Attempt to read the settings from a JSON file
         try:
             with open("settings.json", "r") as file:
                 settings = json.load(file)
@@ -21,35 +22,83 @@ def sendToLLM(prompt):
             default_model = "llama3.1"
             with open("settings.json", "w") as file:
                 json.dump({"default_app": default_app, "default_model": default_model}, file)
-
-# Include chat history in the prompt
+    
     context = "\n".join([f"User: {entry['user']}\nLLM: {entry['llm']}" for entry in chat_history])
     full_prompt = f"{context}\nUser: {prompt}" if context else f"User: {prompt}"
-
+    
     if default_app == "Ollama":
         response = sendToLLM_Ollama(full_prompt)
-        if response:  # Ensure response is not None
-            # Add the user prompt and LLM response to the chat history
+        if response:
             chat_history.append({"user": prompt, "llm": response})
-            resp=response
-    else: 
-        resp = "Unsupported application. Please check your settings."
-
-    #easy_notification(resp)  # Send notification with the response
-    return resp  # Return the response for further processing
+            return response
+    else:
+        return "Unsupported application. Please check your settings."
 
 def sendToLLM_Ollama(prompt):
-    # Call the default Ollama model with the provided prompt
+    if not ollama:
+        return "Error: Ollama library not installed or failed to load."
+        
     try:
-        # Adjust the function call to match the correct API usage
-        response = ollama.generate(model=default_model, prompt=prompt)
-        return response.get("response", "No response received.")  # Extract the response text
+        # Initialize Ollama client with explicit host
+        client = ollama.Client(host='http://localhost:11434')
+        response = client.generate(model=default_model, prompt=prompt)
+        return response.get("response", "No response received.")
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error calling Ollama: {str(e)}"
 
 def get_chat_history():
-    """Return the chat history."""
     return chat_history
+
+def change_provider(provider_name: str) -> str:
+    """Change the active LLM provider"""
+    global default_app
+    
+    # Load settings to check availability
+    try:
+        with open("settings.json", "r") as file:
+            settings = json.load(file)
+            providers = settings.get("providers", {})
+            
+            if provider_name not in providers and provider_name != "Ollama":
+                 # Fallback check if it's a valid provider class even if not in settings yet
+                 # For now, just check settings
+                 return f"Error: Provider '{provider_name}' not found in settings."
+            
+            settings["default_app"] = provider_name
+            default_app = provider_name
+            
+            with open("settings.json", "w") as outfile:
+                json.dump(settings, outfile, indent=4)
+                
+            return f"Switched to provider: {provider_name}"
+    except Exception as e:
+        return f"Error changing provider: {e}"
+
+def change_model(model_name: str) -> str:
+    """Change the model for the current provider"""
+    global default_model, default_app
+    
+    try:
+        with open("settings.json", "r") as file:
+            settings = json.load(file)
+            
+        settings["default_model"] = model_name
+        default_model = model_name
+        
+        # Also update the specific provider's model if it exists in the complex structure
+        if "providers" in settings and default_app in settings["providers"]:
+            settings["providers"][default_app]["model"] = model_name
+            
+        with open("settings.json", "w") as outfile:
+            json.dump(settings, outfile, indent=4)
+            
+        return f"Switched model to: {model_name}"
+    except Exception as e:
+        return f"Error changing model: {e}"
+
+def get_current_settings() -> dict:
+    """Get current provider and model"""
+    return {"provider": default_app, "model": default_model}
 
 if __name__ == "__main__":
     while True:
@@ -58,4 +107,3 @@ if __name__ == "__main__":
             break
         response = sendToLLM(prompt)
         print("Response from LLM:", response)
-        

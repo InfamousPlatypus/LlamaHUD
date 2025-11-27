@@ -1,0 +1,15 @@
+C:\Users\mark\LlamaHUD\bin\Release\net6.0-windows\Notifs.exe
+C:\Users\mark\LlamaHUD\bin\Release\net6.0-windows\Notifs.deps.json
+C:\Users\mark\LlamaHUD\bin\Release\net6.0-windows\Notifs.runtimeconfig.json
+C:\Users\mark\LlamaHUD\bin\Release\net6.0-windows\Notifs.dll
+C:\Users\mark\LlamaHUD\bin\Release\net6.0-windows\Notifs.pdb
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\Notifs.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\Notifs.AssemblyInfoInputs.cache
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\Notifs.AssemblyInfo.cs
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\Notifs.csproj.CoreCompileInputs.cache
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\Notifs.sourcelink.json
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\Notifs.dll
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\refint\Notifs.dll
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\Notifs.pdb
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\Notifs.genruntimeconfig.cache
+C:\Users\mark\LlamaHUD\obj\Release\net6.0-windows\ref\Notifs.dll
