@@ -1,110 +1,31 @@
 # LlamaHUD
 
-## About
-LlamaHUD is a minimal, multi-provider LLM frontend that operates under the assumption that there is one conversation, one model, one provider at a time.
+![LlamaHUD Logo](util/LlamaHUD_Logo.png)
 
-The GUI is very simple: chat history, text box, and submit button. This comes from our operating model that has two parts:
+**LlamaHUD** is a minimalist, keyboard-centric HUD for interacting with Local LLMs (Ollama) and cloud providers (OpenAI, Anthropic, etc.). It is designed to be unobtrusive, fast, and powerful.
 
-### Everything can be done with text.
-### Everything can be done in notifications.
+## 🚀 Quick Start
 
-Minimal UI, fast, light. `/commands` can run your entire computer. We are starting with json editing, allowing for updating settings.json.
+1.  **Install**: Follow the [Installation Guide](docs/installation.md).
+2.  **Run**: Execute `run_hud.bat`.
+3.  **Chat**: Type your prompt and press Enter.
 
-## Currently Implemented
+## 📚 Documentation
 
-### Core Features
-- ✅ **GUI** - Simple wxPython interface with chat history
-- ✅ **Interactive Notifications** - C# toast notifications with quick reply capability
-- ✅ **Virtual Environment** - Isolated Python dependencies
-- ✅ **Flexible Configuration** - JSON-based settings for all providers
+*   **[Installation](docs/installation.md)**: Setup instructions and requirements.
+*   **[Basic Usage](docs/usage.md)**: How to interact with the HUD and notifications.
+*   **[Commands](docs/commands.md)**: Master the `/`, `@`, and `#` prefixes.
+*   **[Settings](docs/settings.md)**: Configure providers, models, and prompts.
+*   **[Power Users](docs/power_users.md)**: Advanced shell command execution.
 
-### LLM Backends
-- ✅ **Ollama** - Local models via Ollama
-- ✅ **OpenAI** - ChatGPT and compatible APIs  
-- ✅ **GPT4All** - Local GPT4All server
-- ✅ **Anthropic** - Claude models
-- ✅ **Google** - Gemini models
-- ✅ **WatsonX** - IBM WatsonX AI
+## ✨ Key Features
 
-### Architecture
-- Provider pattern for easy extensibility
-- Per-provider configuration in `settings.json`
-- Automatic chat history management
-- Relative paths for portability
+*   **Multi-Provider**: Support for Ollama, OpenAI, Anthropic, Google Gemini, and more.
+*   **Interactive Notifications**: Reply to LLMs directly from Windows Toast notifications.
+*   **Context Aware**: Drag-and-drop or use `@file` to chat with your documents.
+*   **Prompt Chaining**: Save and reuse prompts with `/`.
+*   **Native Feel**: Fast, lightweight, and integrates with your system tray.
 
-## Configuration
+## 🤝 Contributing
 
-Edit `settings.json` to configure providers:
-
-```json
-{
-  "provider": "Ollama",
-  "providers": {
-    "Ollama": {"model": "llama3.1"},
-    "OpenAI": {"model": "gpt-4", "api_key": "sk-..."},
-    "Anthropic": {"model": "claude-3-5-sonnet-20241022", "api_key": "sk-ant-..."},
-    "Google": {"model": "gemini-pro", "api_key": "..."},
-    "GPT4All": {"model": "gpt4all-lora", "base_url": "http://localhost:4891/v1"},
-    "WatsonX": {"model": "ibm/granite-13b-chat-v2", "api_key": "...", "project_id": "..."}
-  }
-}
-```
-
-## Commands
-
-- **`/prompt`** - Inject preconfigured prompts (e.g., `/startup`, `/code_review`)
-- **`@file`** - Read file content (supports fuzzy search, auto-creates if missing)
-- **`#changeBackend <provider>`** - Switch LLM provider (e.g., `#changeBackend OpenAI`)
-- **`#changeModel <model>`** - Switch model (e.g., `#changeModel gpt-4`)
-- **`#shell <command>`** - Execute shell command (requires confirmation)
-- **`#read @file`** - Read file via command line
-
-## Running
-
-```bash
-# Build notifications (first time or after changes)
-.\build_notifs.bat
-
-# Run the application
-.\run_hud.bat
-```
-
-### Medium Priority
-- [ ] Cross-platform support (Linux, macOS notifications)
-- [ ] MCP server integration
-- [ ] Agent support (multi-step reasoning, tool use)
-- [ ] AnythingLLM backend
-
-### Low Priority
-- [ ] Package as single executable
-- [ ] Installer/distribution
-
-## Architecture
-
-**Python Components:**
-- `HUD.py` - Main GUI application
-- `LLMs.py` - Multi-provider LLM interface
-- `Notifs.py` - Python wrapper for C# notifications
-- `SlashCheck.py` - Command processor
-
-**C# Components:**
-- `Notifs.cs` - Interactive toast notifications with IPC
-
-**Configuration:**
-- `settings.json` - Provider settings and API keys
-- `requirements.txt` - Python dependencies
-
-## Dependencies
-
-Install Python dependencies:
-```bash
-.venv\Scripts\pip install -r requirements.txt
-```
-
-Included providers:
-- wxPython (GUI)
-- ollama (Ollama)
-- openai (OpenAI, GPT4All)
-- anthropic (Claude)
-- google-generativeai (Gemini)
-- ibm-watsonx-ai (WatsonX)
+Contributions are welcome! Please feel free to submit a Pull Request.

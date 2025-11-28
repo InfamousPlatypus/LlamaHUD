@@ -1,7 +1,8 @@
-from windows_toasts import InteractableWindowsToaster, Toast, ToastImageAndText2, ToastInputTextBox, ToastButton, ToastActivatedEventArgs
+from windows_toasts import InteractableWindowsToaster, Toast, ToastInputTextBox, ToastButton, ToastActivatedEventArgs, ToastDisplayImage, ToastImagePosition
 import socket
 import threading
 import sys
+import os
 
 # Define a custom AUMID
 AUMID = "LlamaHUD.App"
@@ -18,14 +19,18 @@ def send_reply_to_hud(reply_text):
         print(f"Failed to send reply: {e}")
 
 def show_interactive_notification(title: str, message: str):
-    """Show an interactive toast with text input"""
+    """Show an interactive toast with text input and logo"""
     try:
         toaster = InteractableWindowsToaster(AUMID)
         
         # Create toast
-        toast = ToastImageAndText2()
-        toast.SetHeadline(title)
-        toast.SetBody(message)
+        toast = Toast()
+        toast.text_fields = [title, message]
+        
+        # Add Logo if available (App Logo position)
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "util", "LlamaHUD_Logo.png")
+        if os.path.exists(icon_path):
+            toast.AddImage(ToastDisplayImage.fromPath(icon_path, position=ToastImagePosition.AppLogo))
         
         # Add input box
         text_input = ToastInputTextBox("reply_box", "Type a reply...", "Reply")
@@ -62,7 +67,7 @@ def easy_notification(message: str):
 
 if __name__ == "__main__":
     # Test
-    easy_notification("Test interactive notification. Type a reply and click Send.")
+    easy_notification("Test interactive notification with logo.")
     # Keep alive for a moment to receive callback if testing
     import time
     time.sleep(10)

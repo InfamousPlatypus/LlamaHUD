@@ -205,8 +205,8 @@ class CommandParser:
                     feedback.append(f"[Error: {content}]")
                 continue
             
-            # Check for #changeBackend
-            if full_command.lower().startswith("changebackend"):
+            # Check for #changeBackend or #changeProvider
+            if full_command.lower().startswith("changebackend") or full_command.lower().startswith("changeprovider"):
                 print("DEBUG: Detected changeBackend command")
                 import LLMs
                 # Case insensitive check for the command, but preserve case for argument
@@ -216,7 +216,7 @@ class CommandParser:
                     print(f"DEBUG: Switching to provider: {provider}")
                     result = LLMs.change_provider(provider)
                     replacements.append((match.start(), match.end(), ""))
-                    feedback.append(f"[{result}]")
+                    feedback.append(f"\n---------------- {result} ----------------\n")
                 else:
                     print("DEBUG: Missing provider argument")
                 continue
@@ -230,7 +230,7 @@ class CommandParser:
                     model = parts[1].strip()
                     result = LLMs.change_model(model)
                     replacements.append((match.start(), match.end(), ""))
-                    feedback.append(f"[{result}]")
+                    feedback.append(f"\n---------------- {result} ----------------\n")
                 continue
             
             # Check for explicit #shell prefix

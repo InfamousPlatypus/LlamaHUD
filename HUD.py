@@ -3,6 +3,7 @@ import wx.adv
 import LLMs
 import threading
 import socket
+import os
 from Notifs import easy_notification
 from CommandParser import CommandParser
 
@@ -11,7 +12,17 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
     def __init__(self, frame):
         super().__init__()
         self.frame = frame
-        self.SetIcon(wx.Icon(wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_OTHER, (16, 16))), "LlamaHUD")
+        
+        # Load custom icon if available
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "util", "LlamaHUD_Logo.png")
+        if os.path.exists(icon_path):
+            icon = wx.Icon(icon_path, wx.BITMAP_TYPE_PNG)
+            self.SetIcon(icon, "LlamaHUD")
+            # Also set the frame icon
+            frame.SetIcon(icon)
+        else:
+            self.SetIcon(wx.Icon(wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_OTHER, (16, 16))), "LlamaHUD")
+            
         self.Bind(wx.adv.EVT_TASKBAR_LEFT_DCLICK, self.OnLeftDClick)
     
     def CreatePopupMenu(self):
@@ -96,10 +107,15 @@ class ChatWindow(wx.Frame):
         self.waiting_for_confirmation = False
         self.pending_command = None
         self.pending_prompt = None
+        self.is_submitting = False
         
         self.InitUI()
         self.SetupTaskBarIcon()
         self.StartIPCServer()
+        
+        # Show startup info
+        settings = LLMs.get_current_settings()
+        self.response_text.AppendText(f"Current Provider: {settings['provider']} | Model: {settings['model']}\n\n")
         
         self.Bind(wx.EVT_CLOSE, self.OnClose)
     
@@ -213,10 +229,20 @@ class ChatWindow(wx.Frame):
         self.OnSubmit(None)
     
     def OnSubmit(self, event):
+        if self.is_submitting:
+            return
+            
         self.prompt = self.input_field.GetValue()
         
         if not self.prompt.strip():
             return
+            
+        # Check for exit command
+        if self.prompt.strip().lower() == "#exit":
+            self.Close()
+            return
+        
+        self.is_submitting = True
         
         # Check if we're waiting for confirmation
         if self.waiting_for_confirmation:
@@ -227,6 +253,7 @@ class ChatWindow(wx.Frame):
                 self.pending_command = None
                 self.input_field.SetValue("")
                 self.SetFeedback("Ready")
+                self.is_submitting = False
                 return
             elif response in ['n', 'no']:
                 self.response_text.AppendText(f"User: {self.prompt}\n[Cancelled]\n\n")
@@ -234,10 +261,12 @@ class ChatWindow(wx.Frame):
                 self.pending_command = None
                 self.input_field.SetValue("")
                 self.SetFeedback("Ready")
+                self.is_submitting = False
                 return
             else:
                 self.response_text.AppendText(f"User: {self.prompt}\n[Invalid response. Please type Y/Yes or N/No]\n")
                 self.input_field.SetValue("")
+                self.is_submitting = False
                 return
         
         # Disable the submit button
@@ -257,6 +286,15 @@ class ChatWindow(wx.Frame):
             feedback_str = " ".join(feedback)
             self.SetFeedback(feedback_str)
             self.response_text.AppendText(f"\n{feedback_str}\n")
+            
+        # If no text remains after processing commands, don't send to LLM
+        if not processed_text.strip():
+            self.is_submitting = False
+            self.submit_button.Enable()
+            self.submit_button.SetLabel("Submit")
+            self.SetFeedback("Ready")
+            self.input_field.SetFocus()
+            return
         
         # Update UI with user prompt immediately
         self.response_text.AppendText(f"\nUser: {self.prompt}\n")
@@ -274,6 +312,7 @@ class ChatWindow(wx.Frame):
 
     def OnLLMResponse(self, response):
         """Handle LLM response on main thread"""
+        self.is_submitting = False
         self.response = response
         self.response_text.AppendText(f"LLM: {self.response}\n\n")
         
